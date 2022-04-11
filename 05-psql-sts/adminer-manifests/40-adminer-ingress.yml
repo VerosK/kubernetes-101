@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adminer-ingress
+  namespace: postgresql
+  annotations:
+     nginx.ingress.kubernetes.io/configuration-snippet: 
+       allow 195.113.155.0/24; # mzk
+       allow 185.149.130.168; # veros doma
+       deny all; # close others
+spec:
+#  tls:
+#    - hosts:
+#        - rm-sql.app.knihovny.cz
+#      secretName: adminer-tls
+  rules:
+  - host: sql.bream.d53.cz
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: adminer-web
+            port: 
+               number: 8080

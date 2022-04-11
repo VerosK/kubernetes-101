@@ -1,0 +1,14 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: default
+globalDefault: true
+value: 5000
+description: "This is standard PriorityClass"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: not-important
+value: 20000
+description: "This should be applied to very important paths"

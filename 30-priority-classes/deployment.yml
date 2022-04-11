@@ -1,0 +1,23 @@
+# Deploy host end service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: classy
+  template:
+    metadata:
+      labels:
+        app: classy
+    spec:
+      priorityClassName: not-important
+      containers:
+        - name: busybox
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 86400

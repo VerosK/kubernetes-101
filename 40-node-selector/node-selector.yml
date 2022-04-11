@@ -1,0 +1,24 @@
+# Deploy host end service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spread
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spread
+  template:
+    metadata:
+      labels:
+        app: spread
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: busybox
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 86400

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app_component: minio
+  template:
+    metadata:
+      labels:
+        app_component: minio
+    spec:
+      containers:
+        - name: minio-server
+          image: minio
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - /data
+            - --address=0.0.0.0:9000
+          ports:
+            - containerPort: 9000
+              name: minio
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+              readOnly: false
+          envFrom:
+            - secretRef:
+                name: minio-env
+            - configMapRef:
+                name: minio-env
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-data
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,16 @@
+
+args:
+  - --kubelet-insecure-tls
+  - --kubelet-preferred-address-types=InternalIP
+  - -v=1
+  - --kubelet-port=10250
+
+fullnameOverride: metrics-server
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 164Mi
+  limits:
+    cpu: 500m
+    memory: 164Mi

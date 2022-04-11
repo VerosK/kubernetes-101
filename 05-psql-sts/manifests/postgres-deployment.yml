@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: postgresql
+spec:
+  serviceName: postgres
+  replicas: 1
+  podManagementPolicy: OrderedReady
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app_component: postgres
+      environment: dev
+  template:
+    metadata:
+      labels:
+        app_component: postgres
+        environment: dev
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9187'
+        reloader.stakater.com/auto: 'true'
+    spec:
+      containers:
+        - name: postgres
+          image: library/postgres:9.6
+          imagePullPolicy: Always
+          args:
+            - -c 
+            - shared_buffers=256MB 
+            - -c
+            - max_connections=10
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /data
+              readOnly: false
+          envFrom:
+            - configMapRef:
+                name: postgres-env
+          env:
+            - name: PGDATA
+              value: /data/postgres
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: '0.1'
+            limits:
+              memory: "2Gi"
+              cpu: '1'
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 10
+            tcpSocket:
+              port: 5432
+          startupProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 2
+            tcpSocket:
+              port: 5432
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres
+  namespace: postgresql
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+

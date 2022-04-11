@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-kubernetes
+data:
+  MESSSAGE: hello-kubernetes
+---
+kind: Secret
+apiVersion: v1
+type: Opaque
+metadata:
+  name: hello-kubernetes
+data:
+  PASSWORD: bmJ1c3IxMjM=

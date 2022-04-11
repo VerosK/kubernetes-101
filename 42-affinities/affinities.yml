@@ -1,0 +1,58 @@
+# Deploy host end service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spread
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: spread
+  template:
+    metadata:
+      labels:
+        app: spread
+      annotations:
+        version: '2'
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+
+          #preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - spread
+      containers:
+        - name: busybox
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 86400
+          resources:
+            requests:
+              memory: 128M
+            limits:
+              memory: 128M
+
+# ---
+#     affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: node-role.kubernetes.io/master
+#                    operator: NotIn
+#                    values: [ 'true' ]
+

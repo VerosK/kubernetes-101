@@ -1,0 +1,39 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-kubernetes
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-kubernetes
+  template:
+    metadata:
+      labels:
+        app: hello-kubernetes
+    spec:
+      initContainers:
+        - name: sleep
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 10
+      containers:
+      - name: hello-kubernetes
+        image: paulbouwer/hello-kubernetes:1.10
+        ports:
+        - containerPort: 8080
+# ---
+#        envFrom:
+#          - configMapRef:
+#              name: hello-kubernetes
+# ---
+#        readinessProbe:
+#          httpGet:
+#            port: 8080
+#        livenessProbe:
+#          httpGet:
+#            port: 8080

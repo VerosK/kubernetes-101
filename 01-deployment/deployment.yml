@@ -1,0 +1,55 @@
+# Deploy host end service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-kubernetes
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: hello-kubernetes
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-kubernetes
+data:
+  MESSSAGE: hello-kubernetes
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-kubernetes
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 10
+  selector:
+    matchLabels:
+      app: hello-kubernetes
+  template:
+    metadata:
+      labels:
+        app: hello-kubernetes
+    spec:
+      containers:
+      - name: hello-kubernetes
+        image: paulbouwer/hello-kubernetes:1.10
+        ports:
+        - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: hello-kubernetes
+        env:
+          - name: MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                key: MESSAGE
+                name: hello-kubernetes
+                optional: true

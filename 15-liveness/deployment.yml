@@ -1,0 +1,47 @@
+# Deploy host end service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcheck-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10 # the default
+  selector:
+    matchLabels:
+      app: healthcheck-demo
+  template:
+    metadata:
+      labels:
+        app: healthcheck-demo
+    spec:
+      initContainers:
+        - name: sleep
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 10
+      containers:
+        - name: liveness-demo
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - touch /tmp/healthy; sleep 9; rm -rf /tmp/healthy; sleep 60
+
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /healthz
+
+
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+            timeoutSeconds: 2

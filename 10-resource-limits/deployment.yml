@@ -1,0 +1,29 @@
+# Deploy host end service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: limit-demo
+  namespace: limits
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: limit-demo
+  template:
+    metadata:
+      labels:
+        app: limit-demo
+    spec:
+      containers:
+        - name: busybox
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - sleep 86400
+          resources:     
+            limits:      
+              cpu: 1000m 
+            requests:        
+              cpu: 100m      
+
