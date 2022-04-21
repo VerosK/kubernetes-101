@@ -21,12 +21,12 @@ based on https://github.com/paulbouwer/hello-kubernetes
 
 ## Advanced tasks
 
-* scale number of replicats application
+* scale number of replicas for the deployment
 
 * change env.variable `MESSAGE` to change the page message
 
 ## Do cleanup
 
     kubens default
-    kubectl apply -f deployment.yml
+    kubectl delete -f .
 
