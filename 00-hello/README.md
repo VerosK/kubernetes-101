@@ -15,7 +15,7 @@ based on https://github.com/paulbouwer/hello-kubernetes
       kubens default
       kubectl apply -f deployment.yml
 
-* check application http://your-hostname:8080/
+* check application http://your-hostname:30080/
 
 * kill the pods with k9s, watch dem
 
