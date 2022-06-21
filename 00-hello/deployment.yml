@@ -26,14 +26,9 @@ spec:
         image: paulbouwer/hello-kubernetes:1.10
         ports:
         - containerPort: 8080
-# ---
-#        envFrom:
-#          - configMapRef:
-#              name: hello-kubernetes
-# ---
-#        readinessProbe:
-#          httpGet:
-#            port: 8080
-#        livenessProbe:
-#          httpGet:
-#            port: 8080
+      - name: debug
+        image: centos:7
+        args:
+          - /bin/sh
+          - -c 
+          - sleep 7d
