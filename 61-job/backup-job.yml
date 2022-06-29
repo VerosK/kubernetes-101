@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: backup
+          image: docker.io/bitnami/postgresql:14.3.0-debian-10-r22
+          command:
+            - bash
+            - -c
+            - "pg_dump postgres"
+          env:
+            - name: PGHOST
+              value: psql-postgresql
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-password
+                  name: psql-postgresql
+
+

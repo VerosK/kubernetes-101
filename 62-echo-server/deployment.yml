@@ -1,0 +1,33 @@
+# Deploy host end service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: echo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - name: echo
+        image: mendhak/http-https-echo
+        ports:
+        - containerPort: 8080
