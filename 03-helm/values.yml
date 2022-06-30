@@ -1,0 +1,7 @@
+ingress:                                           
+  main:                                            
+    enabled: true                                  
+    hosts:                                         
+       - host: view.gibbon.d53.cz                   
+         paths:                                    
+           - path: /                               
