@@ -1,0 +1,32 @@
+# https://github.com/grafana/helm-charts/blob/main/charts/promtail/values.yaml
+
+nameOverride: promtail
+fullnameOverride: promtail
+
+daemonset:
+  enabled: true
+
+deployment:
+  enabled: false
+
+config:
+  clients:
+    - url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
+      #tenant_id: 1  # multi-tenancy is disabled
+      #basic_auth:
+      #  username: loki
+      #  password: secret
+
+
+extraVolumes:
+  - name: node-logs
+    hostPath:
+      path: /var/log
+
+extraVolumeMounts:
+  - name: node-logs
+    mountPath: /var/logs/host
+    readOnly: true
+
+extraArgs:
+  - -client.external-labels=cluster=loki

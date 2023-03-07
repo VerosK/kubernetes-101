@@ -1,0 +1,53 @@
+
+fullnameOverride: loki
+
+loki:
+  commonConfig:
+    replication_factor: 1
+  auth_enabled: false
+  storage:
+    type: 's3'
+
+enterprise:
+  enabled: false
+
+read:
+  replicas: 1
+  # disable anti-affinity on single node cluster
+
+write:
+  replicas: 1
+  # disable anti-affinity on single node cluster
+
+minio:
+  enabled: true
+  replicas: 1
+  # existingSecret: minio-initial-secrets
+  # Minio requires 2 to 16 drives for erasure code (drivesPerNode * replicas)
+  # https://docs.min.io/docs/minio-erasure-code-quickstart-guide
+  # Since we only have 1 replica, that means 2 drives must be used.
+  drivesPerNode: 2
+  # for network policies matching
+  podLabels:
+    app.kubernetes.io/component: minio
+  persistence:
+    enabled: true
+    size: 50Gi
+  networkPolicy:
+    enabled: false
+  podDisruptionBudget:
+    enabled: true
+    maxUnavailable: 1
+
+  priorityClassName: "system-cluster-critical"
+
+monitoring:
+  rules:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+  selfMonitoring:
+    enabled: false
+
+prometheusRule:
+  enabled: false

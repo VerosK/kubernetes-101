@@ -1,0 +1,53 @@
+# see:
+# https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md#configuration
+
+nameOverride: grafana
+fullnameOverride: grafana
+
+replicas: 1
+
+ingress:
+  enabled: false
+
+persistence:
+  enabled: true
+  size: 10Gi
+  type: pvc
+
+adminUser: admin
+adminPassword: nbusr123
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        url: http://loki-gateway.loki.svc.cluster.local/
+        access: proxy
+        isDefault: true
+        jsonData:
+          maxLines: 1000
+          timeInterval: 5s
+          version: 1
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    loki-logs:
+      gnetId: 13639
+      #revision: 1
+      datasource: Loki
+
